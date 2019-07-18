@@ -7,6 +7,7 @@ import (
 
 var autoOneLvl = 0
 var autoIncOneString = ""
+
 func GetAutoIncOneString() string {
 	return autoIncOneString
 }
@@ -21,6 +22,7 @@ func AutoIncOne() {
 			for autoOneLvl == 1 {
 				bal++
 				time.Sleep(1 * time.Millisecond)
+
 			}
 		}
 		if autoOneLvl == 2 {
