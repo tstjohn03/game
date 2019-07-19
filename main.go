@@ -2,20 +2,22 @@ package main
 
 import (
 	"./models"
-	"log"
+	//"log"
 	"github.com/gorilla/websocket"
 	//"fmt"
 	"net/http"
 	"html/template"
 	"github.com/gorilla/mux"
+	"time"
 )
 
-var upgrader = websocket.Upgrader{
-	ReadBufferSize: 1024,
-	WriteBufferSize: 1024,
-}
+
 
 var templates *template.Template
+
+func main() {
+	setupRoutes()
+}
 
 func setupRoutes() {
 	r := mux.NewRouter()
@@ -25,19 +27,17 @@ func setupRoutes() {
 	r.HandleFunc("/upgrade-click/", models.CUpgradeHandler).Methods("POST")
 	r.HandleFunc("/add/", models.BalanceHandler).Methods("POST")
 	r.HandleFunc("/auto-inc-one/", models.AutoIncOneHandler).Methods("POST")
-	r.HandleFunc("/ws", wsEndpoint)
+	//r.HandleFunc("/ws", wsEndpoint)
+	r.HandleFunc("/ws", wsHandler)
 	//http.HandleFunc("/ws", wsEndpoint)
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static", http.FileServer(http.Dir("./static/"))))
 	http.Handle("/", r)
 	http.ListenAndServe(":8080", nil)
 }
 
-func main() {
-	go models.AutoIncOne()
-	setupRoutes()
-}
 
-func reader(conn *websocket.Conn) {
+
+/*func reader(conn *websocket.Conn) {
 	for {
 		messageType, p, err := conn.ReadMessage()
 		if err != nil {
@@ -52,9 +52,9 @@ func reader(conn *websocket.Conn) {
 			return
 		}
 	}
-}
+}*/
 
-func wsEndpoint(w http.ResponseWriter, r *http.Request) {
+/*func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 	upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
 	ws, err := upgrader.Upgrade(w, r, nil)
@@ -65,9 +65,10 @@ func wsEndpoint(w http.ResponseWriter, r *http.Request) {
 	log.Println("Client Successfully Connected...")
 
 	reader(ws)
-}
+}*/
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	go models.AutoIncOne()
 	bal := models.GetBalance()
 	clickStatus := models.GetClickStatus()
 	autoIncOneString := models.GetAutoIncOneString()

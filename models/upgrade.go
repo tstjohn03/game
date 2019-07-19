@@ -29,7 +29,6 @@ func AutoIncOne() {
 				coinPerSecond = 1
 				bal++
 				time.Sleep(1000 * time.Millisecond)
-
 			}
 		}
 		if autoOneLvl == 2 {
@@ -45,8 +44,8 @@ func AutoIncOne() {
 }
 
 func AutoIncOneHandler(w http.ResponseWriter, r *http.Request) {
-	if autoOneLvl == 0 && bal >= 200 {
-		bal = bal - 200
+	if autoOneLvl == 0 && bal >= 10 {
+		bal = bal - 10
 		autoOneLvl = 1
 		http.Redirect(w, r, "/", 302)
 		return
