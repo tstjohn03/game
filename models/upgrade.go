@@ -3,100 +3,116 @@ package models
 import (
 	"net/http"
 	"time"
+	//"fmt"
+	"log"
 )
 
-var autoOneLvl = 0
-var autoIncOneString = ""
-var coinPerSecond = 0
 
 func GetAutoIncOneString() string {
-	return autoIncOneString
+	log.Println("Auto Inc One String: ", status.AutoIncOneString)
+	return status.AutoIncOneString
 }
 
 func GetCoinPerSecond() int {
-	return coinPerSecond
+	log.Println("Coin Per Second: ", status.CoinPerSecond)
+	return status.CoinPerSecond
 }
 
 func AutoIncOne() {
-	for autoOneLvl >= 0{
-		if autoOneLvl == 0 {
-			autoIncOneString = "200 coins"
-			coinPerSecond = 0
+	for status.AutoOneLvl >= 0{
+		if status.AutoOneLvl == 0 {
+			status.AutoIncOneString = "200 Coins"
+			status.CoinPerSecond = 0
 		}
-		if autoOneLvl == 1 {
-			autoIncOneString = "350 coins to upgrade"
-			for autoOneLvl == 1 {
-				coinPerSecond = 1
-				bal++
+		if status.AutoOneLvl == 1 {
+			status.AutoIncOneString = "350 Coins to upgrade"
+			for status.AutoOneLvl == 1 {
+				status.CoinPerSecond = 1
+				balance.Coins++
+				log.Println("Balance After Increment:", balance.Coins)
 				time.Sleep(1000 * time.Millisecond)
 			}
 		}
-		if autoOneLvl == 2 {
-			autoIncOneString = "No More Upgrades"
-			for autoOneLvl == 2 {
-				coinPerSecond = 2
-				bal+= 2
+		if status.AutoOneLvl == 2 {
+			status.AutoIncOneString = "No More Upgrades"
+			for status.AutoOneLvl == 2 {
+				status.CoinPerSecond = 2
+				balance.Coins+= 2
+				log.Println("Balance After Increment:", balance.Coins)
+
 				time.Sleep(1000 * time.Millisecond)
 			}
 		}
 	}
 	
 }
-
-func AutoIncOneHandler(w http.ResponseWriter, r *http.Request) {
-	if autoOneLvl == 0 && bal >= 10 {
-		bal = bal - 10
-		autoOneLvl = 1
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	if autoOneLvl == 0 && bal < 200 {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	if autoOneLvl == 1 && bal >= 350 {
-		bal = bal - 350
-		autoOneLvl = 2
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	if autoOneLvl == 1 && bal < 350 {
-		http.Redirect(w, r, "/", 302)
-		return
+func BuildAutoIncOneHandler(bal *BalanceType) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if status.AutoOneLvl == 0 && bal.Coins >= 10 {
+			bal.Coins = bal.Coins - 10
+			status.AutoOneLvl = 1
+			log.Println("Balance:", bal.Coins)
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.AutoOneLvl == 0 && bal.Coins < 200 {
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.AutoOneLvl == 1 && bal.Coins >= 350 {
+			bal.Coins = bal.Coins - 350
+			status.AutoOneLvl = 2
+			log.Println("Balance:", bal.Coins)
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.AutoOneLvl == 1 && bal.Coins < 350 {
+			http.Redirect(w, r, "/", 302)
+			return
+		}
 	}
 }
 
-func CUpgradeHandler(w http.ResponseWriter, r *http.Request) {
-	if clickStatus == 0 && bal >= 20{
-		bal = bal - 20
-		clickStatus = 1
+func BuildCUpgradeHandler(bal *BalanceType) http.HandlerFunc {
+	return func (w http.ResponseWriter, r *http.Request, ) {
+		if status.ClickStatus == 0 && bal.Coins >= 20{
+			bal.Coins = bal.Coins - 20
+			status.ClickStatus = 1
+			log.Println("Balance:", bal.Coins)
+			log.Println("Click Status:", status.ClickStatus)
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.ClickStatus == 0 && bal.Coins < 20 {
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.ClickStatus == 1 && bal.Coins >= 100{
+			bal.Coins = bal.Coins - 100
+			status.ClickStatus = 2
+			log.Println("Balance:", bal.Coins)
+			log.Println("Click Status:", status.ClickStatus)
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.ClickStatus == 1 && bal.Coins < 100 {
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+	
+		if status.ClickStatus == 2 && bal.Coins >= 275{
+			bal.Coins = bal.Coins - 275
+			status.ClickStatus = 3
+			log.Println("Balance:", bal.Coins)
+			log.Println("Click Status:", status.ClickStatus)
+			http.Redirect(w, r, "/", 302)
+			return
+		}
+		if status.ClickStatus == 2 && bal.Coins < 275 {
+			http.Redirect(w, r, "/", 302)
+			return
+		}
 		http.Redirect(w, r, "/", 302)
-		return
 	}
-	if clickStatus == 0 && bal < 20 {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	if clickStatus == 1 && bal >= 100{
-		bal = bal - 100
-		clickStatus = 2
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	if clickStatus == 1 && bal < 100 {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-
-	if clickStatus == 2 && bal >= 275{
-		bal = bal - 275
-		clickStatus = 3
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	if clickStatus == 2 && bal < 275 {
-		http.Redirect(w, r, "/", 302)
-		return
-	}
-	http.Redirect(w, r, "/", 302)
 }
+

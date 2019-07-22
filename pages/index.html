@@ -14,7 +14,7 @@
             <form action="/add/" method="POST">
                 <div class="container">
                     <p>Coins From Click: {{.ClickPower}} | Coins Per Second: {{.CoinPerSecond}}</p>
-                    <!--<p>Coins: {{.Balance}}</p>-->
+                    <p>Coins: {{.Balance}}</p>
                     <button style="float: left;" class="btn-primary" type="submit" name="coinClick">Click Me!</button><br>
                     <p id="bal"></p>
                 </div>
@@ -32,34 +32,6 @@
                 <p>{{.IncOneString}}</p>
             </form>
         </div>
-
-        <script>
-            let socket = new WebSocket("ws://localhost:8080/ws")
-            let coins = 0;
-
-            console.log("Attempting Websocket Connection")
-
-            socket.onopen = () => {
-                console.log("Successfuly Connected!")
-            }
-
-            socket.onclose = (event) => {
-                console.log("Socket Close Connection: ", event)
-            }
-
-            socket.onmessage = (msg) => {
-                coins = msg.data;
-                //console.log("message: ", msg.data);
-            }
-
-            socket.onerror = (error) => {
-                console.log("Socket Error: ", error)
-            }
-
-            socket.addEventListener("message", function(e) {
-                document.getElementById("bal").innerHTML = "Coins: " + coins;
-            })
-        </script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
